@@ -7,7 +7,7 @@ router.post("/login", function (req, res, next) {
   let email = req.body.email;
   let password = req.body.password;
   connection.query(
-    "SELECT * FROM user_users where email = ? and password = ?",
+    "SELECT * FROM user_users where email = $1 and password = $2",
     [email, password],
     function (err, rows) {
       if (err) throw err;
@@ -35,7 +35,7 @@ router.post("/register", function (req, res, next) {
     password: password,
     role: role,
   };
-  connection.query("INSERT INTO user_users SET ?", user, function (err, result) {
+  connection.query("INSERT INTO user_users SET $1", user, function (err, result) {
     if (err) {
       res.send({ message: "error", data: err });
     } else {

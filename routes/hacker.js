@@ -4,7 +4,9 @@ var connection = require("../lib/db");
 
 router.get("/byid/:id", function (req, res, next) {
     const id = req.params['id']
-    connection.query("SELECT * FROM user_hackers where id = ?", [id], function (err, rows) {
+    const query = "SELECT * FROM user_hackers where id = $1"
+    const values =[id]
+    connection.query(query, values, function (err, rows) {
       if (err) throw err;
       // if user not found
       if (rows.length <= 0) {
