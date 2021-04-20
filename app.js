@@ -14,6 +14,8 @@ var hackerRouter = require('./routes/hacker');
 var app = express();
 app.use(cors())
 
+const PORT= process.env.PORT || 8000;
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,8 +33,8 @@ app.use('/auth', authRouter);
 
 app.use('/hacker', hackerRouter);
 
-app.listen(8081, function () {
-  console.log("server listening at port 8081...");
+app.listen(PORT, function () {
+  console.log("server listening at port ", PORT);
 });
 
 module.exports = app;
