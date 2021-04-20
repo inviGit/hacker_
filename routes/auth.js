@@ -6,16 +6,17 @@ var connection = require("../lib/db");
 router.post("/login", function (req, res, next) {
   let email = req.body.email;
   let password = req.body.password;
+  const query = {
+    text: "SELECT * FROM user_users where email = $1 and password = $2",
+    values: [email, password],
+  }
   connection.query(
-    "SELECT * FROM user_users where email = $1 and password = $2",
-    [email, password],
-    function (err, rows) {
-      if (err) throw err;
-      // if user not found
-      if (rows.length <= 0) {
-        res.send({status:0, message: "failed" });
+    query,
+    function (err, r) {
+      if (err) {
+        res.send({status:0, message: err.stack });
       } else {
-        res.send({ status:1, message: "success", role:  rows[0].role});
+        res.send({ status:1, message: "success", role:  r.rows[0].role});
         req.session.loggedin = true;
         req.session.name = email;
       }

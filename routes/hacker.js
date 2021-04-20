@@ -4,36 +4,45 @@ var connection = require("../lib/db");
 
 router.get("/byid/:id", function (req, res, next) {
   const id = req.params["id"];
-  const query = "SELECT * FROM user_hackers where id = $1";
-  const values = [id];
-  connection.query(query, values, (err, rows) => {
+  const query = {
+    text: 'SELECT * FROM user_hackers where id = $1',
+    values: [id],
+  }
+  connection.query(query, (err, r) => {
     if (err)  {
-      res.send({ status: 0, message: err });
+      res.send({ status: 0, message: err.stack });
     } else {
-      res.send(rows[0]);
+      res.send(r.rows[0]);
     }
   });
 });
 
 router.get("/all", function (req, res, next) {
-  connection.query("SELECT * FROM user_hackers", (err, rows) => {
+  // console.log(connection)
+  const query = {
+    text: "SELECT * FROM user_hackers",
+  }
+  connection.query(query, (err, r) => {
     if (err) {
-      res.send({ status: 0, message: err });
-      console.log(err.stack);
+      res.send({ status: 0, message: err.stack });
     } else {
-      res.send(rows);
+      res.send(r.rows);
     }
   });
 });
 
 router.get("/ranks", function (req, res, next) {
+
+  const query = {
+    text:  "SELECT username, name, (solutions_submitted - challenges_solved) as s FROM user_hackers where challenges_solved>10 order by s desc limit 3",
+  }
   connection.query(
-    "SELECT username, name, (solutions_submitted - challenges_solved) as s FROM user_hackers where challenges_solved>10 order by s desc limit 3",
-    function (err, rows) {
+    query,
+    function (err, r) {
       if (err) {
-        res.send({ status: 0, message: err });
+        res.send({ status: 0, message: err.stack });
       } else {
-        res.send(rows);
+        res.send(r.rows);
       }
     }
   );
